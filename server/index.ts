@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 app.get("/", (_req, res) => {
   res.send("<h1>Hello world</h1>");
@@ -9,6 +10,6 @@ app.get("/", (_req, res) => {
 
 const server = http.createServer(app);
 
-server.listen(3000, () => {
-  console.log("listening on *:3000");
+server.listen(port, () => {
+  console.log(`listening on *:${port}`);
 });
