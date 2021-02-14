@@ -1,9 +1,11 @@
+const CopyPlugin = require("copy-webpack-plugin");
+
 module.exports = {
-  entry: "./src/index.ts",
+  entry: "./src/index.tsx",
   module: {
     rules: [
       {
-        test: /\.ts(x?)$/,
+        test: /\.tsx?$/,
         use: "ts-loader",
       },
     ],
@@ -11,4 +13,5 @@ module.exports = {
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".json"],
   },
+  plugins: [new CopyPlugin({ patterns: [{ from: "public", to: "." }] })],
 };
