@@ -1,6 +1,9 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import Dotenv from "dotenv";
+
+Dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,7 +16,7 @@ const httpServer = createServer(app);
 
 const options = {
   cors: {
-    origin: "http://localhost:8080",
+    origin: process.env.ALLOWED_HOST,
     methods: ["GET", "POST"],
   },
 };

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import io from "socket.io-client";
 
 const App: FC = () => {
-  io("http://localhost:3000");
+  io(process.env.WEBSOCKET_ENDPOINT);
   return <div>hello</div>;
 };
 
