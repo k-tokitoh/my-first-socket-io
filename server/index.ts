@@ -23,8 +23,11 @@ const options = {
 
 const io = new Server(httpServer, options);
 
-io.on("connection", (_socket) => {
+io.on("connection", (socket) => {
   console.log("a user connected");
+  socket.on("create message", (msg: string) => {
+    console.log("message: " + msg);
+  });
 });
 
 httpServer.listen(port, () => {
