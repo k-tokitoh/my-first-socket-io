@@ -25,8 +25,9 @@ const io = new Server(httpServer, options);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
-  socket.on("create message", (msg: string) => {
+  socket.on("message", (msg: string) => {
     console.log("message: " + msg);
+    io.emit("message", msg);
   });
 });
 
