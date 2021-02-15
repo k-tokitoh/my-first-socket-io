@@ -1,7 +1,9 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React, { FC } from "react";
+import ReactDOM from "react-dom";
+import io from "socket.io-client";
 
-const App: React.FC = () => {
+const App: FC = () => {
+  io("http://localhost:3000");
   return <div>hello</div>;
 };
 
