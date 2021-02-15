@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import Dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
 
 Dotenv.config();
 
@@ -23,11 +24,14 @@ const options = {
 
 const io = new Server(httpServer, options);
 
+type Message = { id?: string; body: string };
+
 io.on("connection", (socket) => {
   console.log("a user connected");
-  socket.on("message", (msg: string, callback: () => void) => {
-    console.log("message: " + msg);
-    io.emit("message", msg);
+  socket.on("message", (message: Message, callback: () => void) => {
+    console.log("message: " + message);
+    message.id = uuidv4();
+    io.emit("message", message);
     callback();
   });
 });

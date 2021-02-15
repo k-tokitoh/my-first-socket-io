@@ -1,20 +1,23 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import io from "socket.io-client";
 import { useForm } from "react-hook-form";
 
-type Message = { body: string };
+type Message = { id?: string; body: string };
 
 const App: FC = () => {
-  const [messages, setMessages] = useState<Array<string>>([]);
-  const socket = io(process.env.WEBSOCKET_ENDPOINT);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [socket, setSocket] = useState<SocketIOClient.Socket>();
+  useEffect(() => {
+    setSocket(io(process.env.WEBSOCKET_ENDPOINT));
+  }, []);
 
   const { register, handleSubmit, reset } = useForm<Message>();
   const onSubmit = handleSubmit(async (data) => {
-    socket.emit("message", data.body, () => reset());
+    socket?.emit("message", data, () => reset());
   });
 
-  socket.on("message", (message: string) => {
+  socket?.on("message", (message: Message) => {
     setMessages([...messages, message]);
   });
 
@@ -22,7 +25,7 @@ const App: FC = () => {
     <>
       <ul>
         {messages.map((message) => (
-          <li key={message}>{message}</li>
+          <li key={message.id}>{message.body}</li>
         ))}
       </ul>
       <form onSubmit={onSubmit}>
