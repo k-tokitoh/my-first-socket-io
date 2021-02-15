@@ -3,12 +3,15 @@ import ReactDOM from "react-dom";
 import io from "socket.io-client";
 import { useForm } from "react-hook-form";
 
+type Message = { body: string };
+
 const App: FC = () => {
-  const [messages, setMessages] = useState<Array<String>>([]);
+  const [messages, setMessages] = useState<Array<string>>([]);
   const socket = io(process.env.WEBSOCKET_ENDPOINT);
-  const { register, handleSubmit } = useForm();
+
+  const { register, handleSubmit, reset } = useForm<Message>();
   const onSubmit = handleSubmit(async (data) => {
-    socket.emit("message", data.body);
+    socket.emit("message", data.body, () => reset());
   });
 
   socket.on("message", (message: string) => {
@@ -19,7 +22,7 @@ const App: FC = () => {
     <>
       <ul>
         {messages.map((message) => (
-          <li>{message}</li>
+          <li key={message}>{message}</li>
         ))}
       </ul>
       <form onSubmit={onSubmit}>
