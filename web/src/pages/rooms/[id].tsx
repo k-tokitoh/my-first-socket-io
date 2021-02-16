@@ -8,31 +8,33 @@ type Params = { id: string };
 type Message = { id?: string; body: string };
 
 const Room: FC = () => {
-  const { id } = useParams<Params>();
+  const { id: roomId } = useParams<Params>();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [socket, setSocket] = useState<SocketIOClient.Socket>();
   useEffect(() => {
-    setSocket(io(process.env.WEBSOCKET_ENDPOINT));
+    const socket = io(process.env.WEBSOCKET_ENDPOINT);
+    setSocket(socket);
+    socket.emit("join", roomId);
   }, []);
-
-  const { register, handleSubmit, reset } = useForm<Message>();
-  const onSubmit = handleSubmit(async (data) => {
-    setSubmitting(true);
-    socket?.emit("message", data, () => {
-      reset();
-      setSubmitting(false);
-    });
-  });
 
   socket?.on("message", (message: Message) => {
     setMessages([...messages, message]);
   });
 
+  const { register, handleSubmit, reset } = useForm<Message>();
+  const onSubmit = handleSubmit(async (data) => {
+    setSubmitting(true);
+    socket?.emit("message", roomId, data, () => {
+      reset();
+      setSubmitting(false);
+    });
+  });
+
   return (
     <>
-      <div>this is a room. (id: {id})</div>
+      <div>this is a room. (id: {roomId})</div>
       <ul>
         {messages.map((message) => (
           <li key={message.id}>{message.body}</li>

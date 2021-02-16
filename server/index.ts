@@ -27,13 +27,21 @@ const io = new Server(httpServer, options);
 type Message = { id?: string; body: string };
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("message", (message: Message, callback: () => void) => {
-    console.log("message: " + message);
-    message.id = uuidv4();
-    io.emit("message", message);
-    callback();
+  socket.on("join", (roomId: string) => {
+    socket.join(roomId);
+    console.log(`a user joined to room (id: ${roomId})`);
   });
+  console.log("a user connected");
+  socket.on(
+    "message",
+    (roomId: string, message: Message, callback: () => void) => {
+      console.log("roomId: " + roomId);
+      console.log("message: " + message.body);
+      message.id = uuidv4();
+      io.in(roomId).emit("message", message);
+      callback();
+    }
+  );
 });
 
 httpServer.listen(port, () => {
