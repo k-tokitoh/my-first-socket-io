@@ -3,8 +3,14 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import Dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
+import { connect, Schema, model } from "mongoose";
 
 Dotenv.config();
+
+connect(process.env.DB_URI as string);
+
+const RoomSchema = new Schema({ name: String });
+const Room = model("Room", RoomSchema);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -30,6 +36,8 @@ io.on("connection", (socket) => {
   socket.on("join", (roomId: string) => {
     socket.join(roomId);
     console.log(`a user joined to room (id: ${roomId})`);
+    const room = new Room({ name: "test room" });
+    room.save();
   });
   console.log("a user connected");
   socket.on(
