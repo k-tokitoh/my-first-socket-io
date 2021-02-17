@@ -22,7 +22,7 @@ const Room: FC = () => {
 
     socket?.on("message", (message: Message) => {
       console.log(message);
-      setMessages([...messages, message]);
+      setMessages((prevMessages) => [...prevMessages, message]);
     });
 
     return () => {

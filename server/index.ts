@@ -32,10 +32,6 @@ const app = express();
 app.use(cors({ origin: process.env.ALLOWED_HOST }));
 const port = process.env.PORT || 3000;
 
-app.get("/", (_req, res) => {
-  res.send("<h1>Hello world</h1>");
-});
-
 app.post("/rooms", (_req, res) => {
   const room = new Room();
   res.json(room);
