@@ -2,7 +2,6 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import Dotenv from "dotenv";
-import { v4 as uuidv4 } from "uuid";
 import { connect, Schema, model } from "mongoose";
 import cors from "cors";
 
@@ -12,6 +11,15 @@ connect(process.env.DB_URI as string);
 
 const RoomSchema = new Schema({ name: String });
 const Room = model("Room", RoomSchema);
+
+const MessageSchema = new Schema(
+  {
+    roomId: String,
+    body: String,
+  },
+  { timestamps: true }
+);
+const Message = model("Message", MessageSchema);
 
 const app = express();
 app.use(cors({ origin: process.env.ALLOWED_HOST }));
@@ -37,9 +45,12 @@ const options = {
 
 const io = new Server(httpServer, options);
 
-type Message = { id?: string; body: string };
+type MessageInput = { roomId: string; body: string };
 
 io.on("connection", (socket) => {
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
   socket.on("join", (roomId: string) => {
     socket.join(roomId);
     console.log(`a user joined to room (id: ${roomId})`);
@@ -47,16 +58,14 @@ io.on("connection", (socket) => {
     room.save();
   });
   console.log("a user connected");
-  socket.on(
-    "message",
-    (roomId: string, message: Message, callback: () => void) => {
-      console.log("roomId: " + roomId);
-      console.log("message: " + message.body);
-      message.id = uuidv4();
-      io.in(roomId).emit("message", message);
-      callback();
-    }
-  );
+  socket.on("message", (input: MessageInput, callback: () => void) => {
+    console.log("roomId: " + input.roomId);
+    console.log("message: " + input.body);
+    const message = new Message(input);
+    message.save();
+    io.in(input.roomId).emit("message", message);
+    callback();
+  });
 });
 
 httpServer.listen(port, () => {
