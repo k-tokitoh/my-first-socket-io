@@ -25,6 +25,14 @@ const Room: FC = () => {
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
+    (async () => {
+      const res = await fetch(
+        `${process.env.BACKEND_BASE_URI}/rooms/${roomId}/messages`
+      );
+      const messages = await res.json();
+      setMessages(messages);
+    })();
+
     return () => {
       socket.disconnect();
     };
@@ -33,7 +41,7 @@ const Room: FC = () => {
   const { register, handleSubmit, reset } = useForm<Message>();
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
-    socket?.emit("message", { roomId: roomId, body: data.body }, () => {
+    socket?.emit("message", { room: roomId, body: data.body }, () => {
       reset();
       setSubmitting(false);
     });

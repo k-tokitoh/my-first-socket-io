@@ -9,7 +9,10 @@ const client = {
       },
     });
 
-    connect(process.env.DB_URI as string);
+    connect(process.env.DB_URI as string, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   },
 };
 

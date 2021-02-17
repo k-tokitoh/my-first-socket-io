@@ -1,13 +1,13 @@
 import { Schema, model, Model, Document } from "mongoose";
 
 interface IMessage extends Document {
-  roomId: string;
+  room: Schema.Types.ObjectId;
   body: string;
 }
 
 const MessageSchema = new Schema(
   {
-    roomId: String,
+    room: { type: Schema.Types.ObjectId, ref: "Room" },
     body: String,
   },
   { timestamps: true }
