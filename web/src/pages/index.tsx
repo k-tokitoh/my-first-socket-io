@@ -9,7 +9,7 @@ const Index: FC = () => {
       method: "POST",
     });
     const room = await res.json();
-    history.push(`/rooms/${room._id}`);
+    history.push(`rooms/${room.id}`);
   };
 
   return (

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 type Params = { id: string };
 
-type Message = { id?: string; body: string };
+type Message = { id: string; body: string };
 
 const Room: FC = () => {
   const { id: roomId } = useParams<Params>();
@@ -13,20 +13,27 @@ const Room: FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [socket, setSocket] = useState<SocketIOClient.Socket>();
+
   useEffect(() => {
     const socket = io(process.env.BACKEND_BASE_URI);
     setSocket(socket);
-    socket.emit("join", roomId);
-  }, []);
 
-  socket?.on("message", (message: Message) => {
-    setMessages([...messages, message]);
-  });
+    socket.emit("join", roomId);
+
+    socket?.on("message", (message: Message) => {
+      console.log(message);
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const { register, handleSubmit, reset } = useForm<Message>();
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
-    socket?.emit("message", roomId, data, () => {
+    socket?.emit("message", { roomId: roomId, body: data.body }, () => {
       reset();
       setSubmitting(false);
     });
