@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import Dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import { connect, Schema, model } from "mongoose";
+import cors from "cors";
 
 Dotenv.config();
 
@@ -13,10 +14,16 @@ const RoomSchema = new Schema({ name: String });
 const Room = model("Room", RoomSchema);
 
 const app = express();
+app.use(cors({ origin: process.env.ALLOWED_HOST }));
 const port = process.env.PORT || 3000;
 
 app.get("/", (_req, res) => {
   res.send("<h1>Hello world</h1>");
+});
+
+app.post("/rooms", (_req, res) => {
+  const room = new Room();
+  res.json(room);
 });
 
 const httpServer = createServer(app);

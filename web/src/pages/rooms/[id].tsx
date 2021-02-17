@@ -14,7 +14,7 @@ const Room: FC = () => {
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [socket, setSocket] = useState<SocketIOClient.Socket>();
   useEffect(() => {
-    const socket = io(process.env.WEBSOCKET_ENDPOINT);
+    const socket = io(process.env.BACKEND_BASE_URI);
     setSocket(socket);
     socket.emit("join", roomId);
   }, []);
