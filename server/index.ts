@@ -2,8 +2,9 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import Dotenv from "dotenv";
-import { connect, Schema, model, set } from "mongoose";
+import { connect, set } from "mongoose";
 import cors from "cors";
+import { Room, Message } from "./models";
 
 Dotenv.config();
 
@@ -15,18 +16,6 @@ set("toJSON", {
     delete converted._id;
   },
 });
-
-const RoomSchema = new Schema({ name: String });
-const Room = model("Room", RoomSchema);
-
-const MessageSchema = new Schema(
-  {
-    roomId: String,
-    body: String,
-  },
-  { timestamps: true }
-);
-const Message = model("Message", MessageSchema);
 
 const app = express();
 app.use(cors({ origin: process.env.ALLOWED_HOST }));
