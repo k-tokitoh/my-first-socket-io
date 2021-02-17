@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 type Params = { id: string };
 
-type Message = { _id: string; body: string };
+type Message = { id: string; body: string };
 
 const Room: FC = () => {
   const { id: roomId } = useParams<Params>();
@@ -44,7 +44,7 @@ const Room: FC = () => {
       <div>this is a room. (id: {roomId})</div>
       <ul>
         {messages.map((message) => (
-          <li key={message._id}>{message.body}</li>
+          <li key={message.id}>{message.body}</li>
         ))}
       </ul>
       <form onSubmit={onSubmit}>

@@ -2,12 +2,19 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import Dotenv from "dotenv";
-import { connect, Schema, model } from "mongoose";
+import { connect, Schema, model, set } from "mongoose";
 import cors from "cors";
 
 Dotenv.config();
 
 connect(process.env.DB_URI as string);
+
+set("toJSON", {
+  virtuals: true,
+  transform: (_doc: never, converted: { _id?: string }) => {
+    delete converted._id;
+  },
+});
 
 const RoomSchema = new Schema({ name: String });
 const Room = model("Room", RoomSchema);
